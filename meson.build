@@ -1,4 +1,4 @@
-project('Cinnamon', 'c', version : '5.2.0', meson_version : '>=0.46.0')
+project('Cinnamon', 'c', version : '5.2.7', meson_version : '>=0.46.0')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -43,6 +43,7 @@ muffinlibdir = muffin.get_pkgconfig_variable('typelibdir')
 pango = dependency('muffin-cogl-pango-0')
 sn = dependency('libstartup-notification-1.0')
 soup = dependency('libsoup-2.4')
+xapp = dependency('xapp', version: '>= 2.0.0')
 X11 = dependency('x11')
 xml = dependency('libxml-2.0')
 

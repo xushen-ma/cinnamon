@@ -15,30 +15,8 @@ const Main = imports.ui.main;
 const Separator = imports.ui.separator;
 
 const DAY_FORMAT = CinnamonDesktop.WallClock.lctime_format("cinnamon", "%A");
-const DATE_FORMAT_SHORT = CinnamonDesktop.WallClock.lctime_format("cinnamon", "%B %-e, %Y");
-const DATE_FORMAT_FULL = CinnamonDesktop.WallClock.lctime_format("cinnamon", "%A, %B %-e, %Y");
-
-String.prototype.capitalize = function() {
-    return this.charAt(0).toUpperCase() + this.slice(1);
-}
-
-function _onVertSepRepaint (area)
-{
-    let cr = area.get_context();
-    let themeNode = area.get_theme_node();
-    let [width, height] = area.get_surface_size();
-    let stippleColor = themeNode.get_color('-stipple-color');
-    let stippleWidth = themeNode.get_length('-stipple-width');
-    let x = Math.floor(width/2) + 0.5;
-    cr.moveTo(x, 0);
-    cr.lineTo(x, height);
-    Clutter.cairo_set_source_color(cr, stippleColor);
-    cr.setDash([1, 3], 1); // Hard-code for now
-    cr.setLineWidth(stippleWidth);
-    cr.stroke();
-
-    cr.$dispose();
-};
+const DATE_FORMAT_SHORT = CinnamonDesktop.WallClock.lctime_format("cinnamon", _("%B %-e, %Y"));
+const DATE_FORMAT_FULL = CinnamonDesktop.WallClock.lctime_format("cinnamon", _("%A, %B %-e, %Y"));
 
 class CinnamonCalendarApplet extends Applet.TextApplet {
     constructor(orientation, panel_height, instance_id) {
@@ -143,7 +121,7 @@ class CinnamonCalendarApplet extends Applet.TextApplet {
 
             this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
-            let item = new PopupMenu.PopupMenuItem(_("Date and Time Settings"))
+            let item = new PopupMenu.PopupMenuItem(_("Date and Time Settings"));
             item.connect("activate", Lang.bind(this, this._onLaunchSettings));
 
             this.menu.addMenuItem(item);
@@ -246,7 +224,6 @@ class CinnamonCalendarApplet extends Applet.TextApplet {
 
     _has_calendars_changed(em) {
         this.event_list.actor.visible = this.events_manager.is_active();
-        this.events_manager.select_date(this._calendar.getSelectedDate());
     }
 
     _updateClockAndDate() {
@@ -257,6 +234,13 @@ class CinnamonCalendarApplet extends Applet.TextApplet {
         }
 
         this.go_home_button.reactive = !this._calendar.todaySelected();
+        if (this._calendar.todaySelected()) {
+            this.go_home_button.reactive = false;
+            this.go_home_button.set_style_class_name("calendar-today-home-button");
+        } else {
+            this.go_home_button.reactive = true;
+            this.go_home_button.set_style_class_name("calendar-today-home-button-enabled");
+        }
 
         this.set_applet_label(label_string);
 

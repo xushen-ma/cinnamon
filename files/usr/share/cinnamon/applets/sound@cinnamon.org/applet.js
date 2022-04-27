@@ -173,9 +173,12 @@ class VolumeSlider extends PopupMenu.PopupSliderMenuItem {
     }
 
     _onKeyPressEvent(actor, event) {
-        let key = event.get_key_symbol();
+        const key = event.get_key_symbol();
         if (key === Clutter.KEY_Right || key === Clutter.KEY_Left) {
             let delta = key === Clutter.KEY_Right ? VOLUME_ADJUSTMENT_STEP : -VOLUME_ADJUSTMENT_STEP;
+            if (St.Widget.get_default_direction() === St.TextDirection.RTL)
+                delta = -delta;
+
             this._value = Math.max(0, Math.min(this._value + delta/this.applet._volumeMax*this.applet._volumeNorm, 1));
             this._slider.queue_repaint();
             this.emit('value-changed', this._value);
@@ -242,6 +245,7 @@ class VolumeSlider extends PopupMenu.PopupSliderMenuItem {
 class Seeker extends Slider.Slider {
     constructor(mediaServerPlayer, props, playerName) {
         super(0, true);
+        this.actor.set_direction(St.TextDirection.LTR); //Do not invert on RTL layout
 
         this.canSeek = true;
         this.status = 'Stopped';

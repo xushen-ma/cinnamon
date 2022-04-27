@@ -2,6 +2,7 @@
 server_launcher_conf = configuration_data()
 server_launcher_conf.set('MUFFINLIBDIR', muffinlibdir)
 server_launcher_conf.set('PKGLIBDIR', join_paths(prefix, pkglibdir))
+server_launcher_conf.set('LIBEXECDIR', join_paths(prefix, libexecdir))
 
 launcher = configure_file(
     input: 'cinnamon-calendar-server.in',
@@ -12,7 +13,7 @@ launcher = configure_file(
 )
 
 service_conf = configuration_data()
-service_conf.set('BINDIR', bindir)
+service_conf.set('BINDIR', join_paths(prefix, bindir))
 
 launcher = configure_file(
     input: 'org.cinnamon.CalendarServer.service.in',
